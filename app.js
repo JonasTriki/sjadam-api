@@ -1,5 +1,6 @@
 const path = require("path");
 const express = require("express");
+const cors = require("cors");
 const favicon = require('serve-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
@@ -58,8 +59,10 @@ io.on("connection", (socket) => {
                 msg.dX = 7 - data.dX;
                 msg.dY = 7 - data.dY;
             }
+        } else if (msg.type == "history") {
+            msg.notation = data.notation;
         }
-
+        
         // Find other game-socket and emit msg
         for (let i = 0; i < sockets.length; i++) {
             if (sockets[i].socket.id != socket.id) {
@@ -122,7 +125,7 @@ app.use(expressValidator({
     }
 }));
 app.use(cookieParser());
+app.use(cors());
 
-app.use(express.static("./"));
 app.use("/game", game);
 app.use("/", join);

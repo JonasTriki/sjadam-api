@@ -65,8 +65,7 @@ router.post('/', function(req, res, next) {
             }]
         });
 
-        res.send({status: "ok", data: {url: "localhost/?game=" + gameId, gameId: gameId}});
-        // TEMP ^ use: https://sjadam.no
+        res.send({status: "ok", data: {url: "https://sjadam.no/?game=" + gameId, gameId: gameId}});
         db.close();
     });
 });
