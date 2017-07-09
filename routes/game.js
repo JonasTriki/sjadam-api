@@ -3,7 +3,7 @@ const router = express.Router();
 const crypto = require("crypto");
 const MongoClient = require("mongodb").MongoClient;
 const mongoUrl = "mongodb://localhost:27017/sjadam";
-//const io = require("socket.io")(80);
+const config = require("../config");
 
 function generateGameId() {
     return Math.random().toString(36).substr(2, 10);
@@ -65,7 +65,7 @@ router.post('/', function(req, res, next) {
             }]
         });
 
-        res.send({status: "ok", data: {url: "https://sjadam.no/?game=" + gameId, gameId: gameId}});
+        res.send({status: "ok", data: {url: config.prefix + "/?game=" + gameId, gameId: gameId}});
         db.close();
     });
 });
