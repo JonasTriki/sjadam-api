@@ -92,8 +92,22 @@ io.on("connection", (socket) => {
                 games[gameId]--;
                 console.log("Disconnected", gameId, games[gameId]);
                 if (games[gameId] == 1) {
-                    // TODO: Send message to other socket
+
+                    // Send message to other socket
+                    let j = 1 - i;
+                    let otherSocket = sockets[j].socket;
+                    io.to(otherSocket.id).emit("message", {type: "opponent-dc"});
                 } else if (games[gameId] == 0) {
+
+                    // Connect to db and remove game from database
+                    MongoClient.connect(mongoUrl, function(err, db) {
+                        if (err) console.log("Unable to connect to the server", err);
+
+                        // Remove game by its id
+                        console.log("Attempting to remove " + gameId);
+                        db.collection("games").remove({"_id": gameId});
+                        db.close();
+                    });
                     delete games[gameId];
                 }
 
