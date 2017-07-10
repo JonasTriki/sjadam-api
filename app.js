@@ -58,11 +58,19 @@ io.on("connection", (socket) => {
             if (msg.type == "move") {
                 msg.dX = 7 - data.dX;
                 msg.dY = 7 - data.dY;
+                if (data.promotion) {
+                    msg.promotion = {};
+                    msg.promotion.x = 7 - data.promotion.x;
+                    msg.promotion.y = 7 - data.promotion.y;
+                    msg.promotion.piece = data.promotion.piece;
+                }
             }
         } else if (msg.type == "history") {
             msg.notation = data.notation;
+        } else if (msg.type == "game-over") {
+            msg.colorWon = data.colorWon;
         }
-        
+
         // Find other game-socket and emit msg
         for (let i = 0; i < sockets.length; i++) {
             if (sockets[i].socket.id != socket.id) {
