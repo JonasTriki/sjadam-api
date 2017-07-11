@@ -21,27 +21,33 @@ console.log("Server started.");
 // Socket.io set-up
 const io = require("socket.io").listen(server);
 let games = {}, sockets = [];
+
+function emitToGame(id, msg, data) {
+    if (games[id] != 2) return;
+    for (let i = 0; i < sockets.length; i++) {
+        if (sockets[i].gameId == id) {
+            io.to(sockets[i].socket.id).emit(msg, data);
+        }
+    }
+}
+
 io.on("connection", (socket) => {
     console.log("Client connected...", socket.id);
+    let gameId; // Gets set once we join game.
 
     socket.on('error', function (err) {
         if (err.description) throw err.description;
         else throw err; // Or whatever you want to do
     });
 
-    socket.on("join", (gameId) => {
+    socket.on("join", (id) => {
+        if (gameId == undefined) gameId = id;
         sockets.push({socket: socket, gameId: gameId});
         if (games[gameId] == undefined) games[gameId] = 0;
         games[gameId]++;
 
         // Check if both players are connected; if so emit message
-        if (games[gameId] == 2) {
-            for (let i = 0; i < sockets.length; i++) {
-                if (sockets[i].gameId == gameId) {
-                    io.to(sockets[i].socket.id).emit("message", {type: "state", msg: "ready"});
-                }
-            }
-        }
+        emitToGame(gameId, "message", {type: "state", msg: "ready"});
         console.log("Joined game " + gameId, "Count: " + games[gameId]);
     });
 
@@ -69,11 +75,16 @@ io.on("connection", (socket) => {
             msg.notation = data.notation;
         } else if (msg.type == "game-over") {
             msg.colorWon = data.colorWon;
+        } else if (msg.type == "accept-rematch") {
+
+            // Corner-case, we send restart game to both clients.
+            emitToGame(gameId, "message", {type: "state", msg: "restart"});
+            return;
         }
 
         // Find other game-socket and emit msg
         for (let i = 0; i < sockets.length; i++) {
-            if (sockets[i].socket.id != socket.id) {
+            if (sockets[i].gameId == gameId && sockets[i].socket.id != socket.id) {
                 io.to(sockets[i].socket.id).emit("message", msg);
                 break;
             }
@@ -85,10 +96,10 @@ io.on("connection", (socket) => {
 
         // Find socket from array
         for (let i = 0; i < sockets.length; i++) {
-            if (sockets[i].socket.id == socket.id)  {
+            if (sockets[i].gameId == gameId && sockets[i].socket.id == socket.id)  {
 
                 // Reduce game participant count
-                let gameId = sockets[i].gameId;
+                //let gameId = sockets[i].gameId;
                 games[gameId]--;
                 console.log("Disconnected", gameId, games[gameId]);
                 if (games[gameId] == 1) {
