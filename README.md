@@ -9,13 +9,13 @@ POST /{id} Required fields:
 
 Join an already created game with {id}.
 
-POST /game
+POST /game Required fields:
 * color : string, "w" or "b".
 * player_id : string
 
 Creates a new game. Color represents creator player color.
 
-##### __TEMPORARLY :__
+#### __TEMPORARLY :__
 GET /game
 
 Returns all games.
