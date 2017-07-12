@@ -75,6 +75,7 @@ io.on("connection", (socket) => {
             msg.notation = data.notation;
         } else if (msg.type == "game-over") {
             msg.colorWon = data.colorWon;
+            msg.quit = data.quit;
         } else if (msg.type == "accept-rematch") {
 
             // Corner-case, we send restart game to both clients.
