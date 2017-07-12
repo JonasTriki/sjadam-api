@@ -1,11 +1,11 @@
 const path = require("path");
 const express = require("express");
 const cors = require("cors");
-const favicon = require('serve-favicon');
-const logger = require('morgan');
-const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
-const expressValidator = require('express-validator');
+const favicon = require("serve-favicon");
+const logger = require("morgan");
+const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
+const expressValidator = require("express-validator");
 const MongoClient = require("mongodb").MongoClient;
 const mongoUrl = "mongodb://localhost:27017/sjadam";
 
@@ -35,7 +35,7 @@ io.on("connection", (socket) => {
     console.log("Client connected...", socket.id);
     let gameId; // Gets set once we join game.
 
-    socket.on('error', function (err) {
+    socket.on("error", function (err) {
         if (err.description) throw err.description;
         else throw err; // Or whatever you want to do
     });
@@ -130,7 +130,7 @@ io.on("connection", (socket) => {
     });
 });
 
-app.use(logger('dev'));
+app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(expressValidator({
@@ -162,3 +162,9 @@ app.use(cors());
 
 app.use("/game", game);
 app.use("/", join);
+app.use(function(req, res) {
+    res.writeHead(200, {
+        "Content-Type": "text/html; charset=utf-8"
+    });
+    res.end('API for Sjadam.<br><a href="https://github.com/JonasTriki/sjadam-js">https://github.com/JonasTriki/sjadam-js</a>');
+});
