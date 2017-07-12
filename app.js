@@ -166,5 +166,5 @@ app.use(function(req, res) {
     res.writeHead(200, {
         "Content-Type": "text/html; charset=utf-8"
     });
-    res.end('API for Sjadam.<br><a href="https://github.com/JonasTriki/sjadam-js">https://github.com/JonasTriki/sjadam-js</a>');
+    res.end('API for Sjadam.<br><a href="https://github.com/JonasTriki/sjadam-api">https://github.com/JonasTriki/sjadam-api</a>');
 });
