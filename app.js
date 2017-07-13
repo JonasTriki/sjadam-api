@@ -73,6 +73,8 @@ io.on("connection", (socket) => {
             }
         } else if (msg.type == "history") {
             msg.notation = data.notation;
+        } else if (msg.type == "chat") {
+            msg.msg = data.msg;
         } else if (msg.type == "game-over") {
             msg.colorWon = data.colorWon;
             msg.quit = data.quit;
